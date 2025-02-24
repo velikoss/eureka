@@ -1,9 +1,12 @@
-<script>
-    import { Authorize, NewChallenge } from "$lib/Request";
+<script lang="ts">
+    import { Authorize, LoadNews, NewChallenge } from "$lib/Request";
     import { _challengeData, _faculties, _version, _webSocketHandler } from "../+layout";
     import { onMount } from 'svelte';
     import { sha256 } from 'hash.js';
     import { Md5 } from 'ts-md5';
+    import { currentUser } from "../../../stores/user";
+    import { redirect } from "@sveltejs/kit";
+    import { goto } from "$app/navigation";
 
     let version = 165;
     let login = '';
@@ -11,29 +14,44 @@
     let selectedFaculty = '';
     let rememberMe = false;
 
+    // Handle the login process
     const handleLogin = async () => {
         if (!login || !password) {
-            // Аврора не требует выбор института для лоигна. Один вопрос зач тогда ваще
             alert('Please fill in all fields');
             return;
         }
-        try {
-            _challengeData.subscribe((data) => {
-                if (data == -1.0) return;
-                console.log(data);
-                let auth = new Authorize();
-                auth.user_id = login  + "@edu.mirea.ru";
-                auth.password = password;
-                auth.key = sha256().update(Md5.hashStr(`0_${password}_${data}`, true)).digest('hex');
-                auth.gen = 0;
-                auth.g2a = 0;
-                _webSocketHandler.send(auth);    
-            });
-            _webSocketHandler.send(new NewChallenge());
-        } catch (error) {
-            console.error('Error during login:', error);
-            alert('An error occurred during login. Please try again.');
-        }
+
+        // Send a new challenge request
+        _webSocketHandler!.send(new NewChallenge());
+
+        // Subscribe to challenge data
+        _challengeData.subscribe((data) => {
+            if (data === -1.0) return;
+
+            console.log('Challenge data:', data);
+
+            // Create the authorization request
+            let auth = new Authorize();
+            auth.user_id = login + "@edu.mirea.ru";
+            auth.password = password;
+            auth.key = sha256().update(Md5.hashStr(`0_${password}_${data}`, true)).digest('hex');
+            auth.gen = 0;
+            auth.g2a = 0;
+
+            // Send the authorization request
+            _webSocketHandler!.send(auth);
+        });
+
+        // Subscribe to the current user store
+        currentUser.subscribe((value) => {
+            if (value === null) return;
+            
+            _webSocketHandler!.send(new LoadNews());
+
+            // Redirect to /app if the user is logged in
+            throw goto("/app");
+        });
+        
     };
 </script>
 

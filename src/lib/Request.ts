@@ -1,5 +1,7 @@
-import { _setVersion, _faculties, _challengeData } from "../routes/app/+layout";
-import type { APIResponse, LoginResponse } from "./Response";
+import { _setVersion, _faculties, _challengeData, _logged } from "../routes/app/+layout";
+import { news } from "../stores/news";
+import { currentUser, type User } from "../stores/user";
+import { LoginResponse, NewsResponse, type APIResponse } from "./Response";
 
 export abstract class APIRequest {
     abstract callback(response: APIResponse): void;
@@ -40,6 +42,24 @@ export class Authorize extends APIRequest {
     public g2a: number | undefined;
 
     callback(response: LoginResponse): void {
-        
+        if (!response.success) return;
+        let user: User = response.student!;
+        user.auth_key = response.authKey ?? ""; 
+        currentUser.set(user);
+        _logged.set(true);
+    }
+}
+
+export class GetStats extends APIRequest {
+    callback(response: LoginResponse): void {
+        _logged.set(response.success);
+    }
+}
+
+export class LoadNews extends APIRequest {
+    // {"data":{"count":20,"offset":0},"ser_task":"loadNews","arm_task_id":10,"v":165}
+    callback(response: NewsResponse): void {
+        console.log(response.data)
+        news.set(response.data)
     }
 }

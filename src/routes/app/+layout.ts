@@ -5,6 +5,7 @@ import { WebsocketBuilder, Websocket } from "websocket-ts";
 
 export const ssr = false;
 
+export let _logged = writable(false);
 export let _challengeData = writable(-1.0);
 export let _faculties: Writable<String[]> = writable([]);
 export let _version = writable(0);
@@ -33,7 +34,7 @@ export class _WebSocketHandler {
             const data = JSON.parse(message);
             const taskId = data.arm_task_id; // Ensure this matches the server response
             const storedCallback = this.requests.get(taskId); // Retrieve the callback
-    
+
             if (storedCallback) {
                 storedCallback(data); // Invoke the callback
                 this.requests.delete(taskId); // Clean up
@@ -78,7 +79,7 @@ export class _WebSocketHandler {
                         'data': message,
                         'ser_task': task,
                         'arm_task_id': this.i + 1,
-                        'v': _version
+                        'v': get(_version)
                     }
                 )
             );
