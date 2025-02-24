@@ -1,3 +1,4 @@
+import { get } from "svelte/store";
 import { _setVersion, _faculties, _challengeData, _logged } from "../routes/app/+layout";
 import { news } from "../stores/news";
 import { currentUser, type User } from "../stores/user";
@@ -57,9 +58,11 @@ export class GetStats extends APIRequest {
 }
 
 export class LoadNews extends APIRequest {
-    // {"data":{"count":20,"offset":0},"ser_task":"loadNews","arm_task_id":10,"v":165}
     callback(response: NewsResponse): void {
-        console.log(response.data)
-        news.set(response.data)
+        if (response.data && Array.isArray(response.data)) {
+            news.update(() => {return response.data??[];}); // Update the store
+        } else {
+            console.error("Invalid data format:", response.data);
+        }
     }
 }

@@ -8,7 +8,7 @@
     import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
 
-    let version = 165;
+    let version = 166;
     let login = '';
     let password = '';
     let selectedFaculty = '';
@@ -45,8 +45,6 @@
         // Subscribe to the current user store
         currentUser.subscribe((value) => {
             if (value === null) return;
-            
-            _webSocketHandler!.send(new LoadNews());
 
             // Redirect to /app if the user is logged in
             throw goto("/app");

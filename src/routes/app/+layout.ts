@@ -1,3 +1,4 @@
+import { goto } from "$app/navigation";
 import type { APIRequest } from "$lib/Request";
 import type { APIResponse } from "$lib/Response";
 import { get, writable, type Writable } from "svelte/store";
@@ -17,6 +18,22 @@ export function _setWSH(webSocketHandler: _WebSocketHandler) {
     _webSocketHandler = webSocketHandler;
 }
 
+const waitForWebSocketHandler = () => {
+    return new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+            if (_webSocketHandler) {
+                clearInterval(checkInterval);
+                resolve(_webSocketHandler);
+            }
+        }, 100); // Check every 100ms
+    });
+};
+
+export const _sendRequest = async (request: APIRequest) => {
+    const handler = await waitForWebSocketHandler();
+    (handler as _WebSocketHandler).send(request);
+};
+
 export class _WebSocketHandler {
     private ws: Websocket | null = null;
     private url: string;
@@ -34,6 +51,11 @@ export class _WebSocketHandler {
             const data = JSON.parse(message);
             const taskId = data.arm_task_id; // Ensure this matches the server response
             const storedCallback = this.requests.get(taskId); // Retrieve the callback
+
+            if (!data.success && data.error == "Not authorized")  {
+                goto("/app/login");
+                return;
+            }
 
             if (storedCallback) {
                 storedCallback(data); // Invoke the callback
