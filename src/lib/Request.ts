@@ -2,7 +2,8 @@ import { get } from "svelte/store";
 import { _setVersion, _faculties, _challengeData, _logged } from "../routes/app/+layout";
 import { news } from "../stores/news";
 import { currentUser, type User } from "../stores/user";
-import { LoginResponse, NewsResponse, type APIResponse } from "./Response";
+import { LoginResponse, NewsResponse, TasksResponse, type APIResponse } from "./Response";
+import { tasks } from "../stores/task";
 
 export abstract class APIRequest {
     abstract callback(response: APIResponse): void;
@@ -61,6 +62,16 @@ export class LoadNews extends APIRequest {
     callback(response: NewsResponse): void {
         if (response.data && Array.isArray(response.data)) {
             news.update(() => {return response.data??[];}); // Update the store
+        } else {
+            console.error("Invalid data format:", response.data);
+        }
+    }
+}
+
+export class GetTaskList extends APIRequest {
+    callback(response: TasksResponse): void {
+        if (response.data && Array.isArray(response.data)) {
+            tasks.update(() => {return response.data??[];}); // Update the store
         } else {
             console.error("Invalid data format:", response.data);
         }

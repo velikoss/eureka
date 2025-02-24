@@ -56,16 +56,17 @@
 </script>
 
 <main class="font-mono w-screen">
-	<div class="px-5 py-2 border-b topbar flex flex-row justify-between items-baseline">
+	<div class="fixed w-screen top-0 left-0 bg-white px-5 py-2 border-b topbar flex flex-row justify-between items-baseline">
 		<p class="text-xl font-bold">Eureka</p>
 		<div class="flex flex-row gap-5">
 			{#if $currentUser == null}
                 <a href="/app/login" class="underline">Войти в систему</a>
             {/if}
             {#if $currentUser != null}
-                <p>{$currentUser.student_suname} {$currentUser.student_name.substring(0,1)}.{$currentUser.student_patronymic.substring(0,1)}.</p>
+                <p>{$currentUser.student_suname} {$currentUser.student_name.substring(0,1)}.{$currentUser.student_patronymic.substring(0,1)}. ({$currentUser.group_name})</p>
             {/if}
 		</div>
 	</div>
+    <div class="h-12"></div>
 	{@render children()}
 </main>

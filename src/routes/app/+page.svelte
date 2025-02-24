@@ -3,23 +3,33 @@
     import { onMount } from "svelte";
     import { news } from "../../stores/news";
     import { _sendRequest, _webSocketHandler } from "./+layout";
-    import { LoadNews } from "$lib/Request";
+    import { GetTaskList, LoadNews } from "$lib/Request";
     import { derived, get, writable } from "svelte/store";
+    import { tasks } from "../../stores/task";
+    import Task from "$lib/Task.svelte";
     let _news: any = [];
+    let _tasks: any = [];
 
     onMount(async () => {
         await _sendRequest(new LoadNews());
-        const newsUpdater = setInterval(() => {
+        await _sendRequest(new GetTaskList());
+        setInterval(() => {
             _news = get(news);
-            if (_news.length > 0) {
-                clearInterval(newsUpdater);
-            } 
+            _tasks = get(tasks);
         }, 100);
     })
 </script>
 <div class="w-full flex flex-row mt-2.5">
-    <div class="w-1/2"></div>   
-    <div class="w-1/2 flex flex-col px-5">
+    <div class="w-1/2 flex flex-col px-2.5">
+        {#if _tasks.length === 0}
+            <p>Loading tasks...</p>
+        {:else}
+            {#each _tasks as task}
+                <Task task={task} />
+            {/each}
+        {/if}
+    </div>   
+    <div class="w-1/2 flex flex-col px-2.5">
         {#if _news.length === 0}
             <p>Loading news...</p>
         {:else}

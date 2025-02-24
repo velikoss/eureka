@@ -1,4 +1,5 @@
 import type { News } from "../stores/news";
+import type { Task } from "../stores/task";
 import type { User } from "../stores/user";
 
 export class APIResponse {
@@ -9,6 +10,10 @@ export class APIResponse {
 
 export class NewsResponse extends APIResponse {
     declare data: News[] | undefined;
+}
+
+export class TasksResponse extends APIResponse {
+    declare data: Task[] | undefined;
 }
 
 export class LoginResponse extends APIResponse {
