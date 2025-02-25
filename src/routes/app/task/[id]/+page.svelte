@@ -48,7 +48,11 @@
             {JSON.stringify(_task.method2)}
         {/if}
         {#if _state == "algo2"}
-            {JSON.stringify(_task.algo2)}
+            {#each _task.algo2 as algo}
+                {#each algo.algo as algo2}
+                    {JSON.stringify(algo2)} <br>
+                {/each}
+            {/each}
         {/if}
         {#if _state == "algo-scheme"}
             {JSON.stringify(_task.algo_graph)}

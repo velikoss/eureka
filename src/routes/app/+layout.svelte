@@ -13,7 +13,7 @@
 
     onMount(() => {
         if (_webSocketHandler == undefined || (_webSocketHandler as _WebSocketHandler).isClosed()) {
-            const wsh = new _WebSocketHandler('ws://localhost:8765');
+            const wsh = new _WebSocketHandler('ws://эврика.великосс.рф:8488');
             _setWSH(wsh);
             wsh.onOpen(() => {
                 console.log("WebSocket connected");

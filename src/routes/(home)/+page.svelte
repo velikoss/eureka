@@ -1,4 +1,5 @@
 <div class="pt-10 w-full flex flex-col justify-center items-center">
+    <img width="256px" class="-m-16 -mt-10" src="https://github.com/velikoss/eureka/blob/main/static/eureka-transparent.png?raw=true" alt="eureka logo">
     <p class="font-bold text-9xl">Eureka</p>
     <p class="text-xl">Аврора, но чут чут 🤏🤏 лучше</p>
     <p class="text-lg">Специально для студентов РТУ МИРЭА</p>
