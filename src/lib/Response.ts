@@ -1,5 +1,5 @@
 import type { News } from "../stores/news";
-import type { Task } from "../stores/task";
+import type { Task } from "../stores/tasks";
 import type { User } from "../stores/user";
 
 export class APIResponse {

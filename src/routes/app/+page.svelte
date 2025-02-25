@@ -3,9 +3,9 @@
     import { onMount } from "svelte";
     import { news } from "../../stores/news";
     import { _sendRequest, _webSocketHandler } from "./+layout";
-    import { GetTaskList, LoadNews } from "$lib/Request";
+    import { GetTaskList, LoadNews, LoadUserPreferences } from "$lib/Request";
     import { derived, get, writable } from "svelte/store";
-    import { tasks } from "../../stores/task";
+    import { tasks } from "../../stores/tasks";
     import Task from "$lib/Task.svelte";
     let _news: any = [];
     let _tasks: any = [];
@@ -13,6 +13,7 @@
     onMount(async () => {
         await _sendRequest(new LoadNews());
         await _sendRequest(new GetTaskList());
+        await _sendRequest(new LoadUserPreferences());
         setInterval(() => {
             _news = get(news);
             _tasks = get(tasks);

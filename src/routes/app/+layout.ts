@@ -25,7 +25,7 @@ const waitForWebSocketHandler = () => {
                 clearInterval(checkInterval);
                 resolve(_webSocketHandler);
             }
-        }, 100); // Check every 100ms
+        }, 50); // Check every 100ms
     });
 };
 
@@ -91,14 +91,14 @@ export class _WebSocketHandler {
             .build();
     }
 
-    public send(message: APIRequest): void {
+    public send(message: APIRequest, override: any = undefined): void {
         if (this.ws) {
             let task: string = message.constructor.name;
             task = task[0].toLowerCase() + task.substring(1);
             console.log(
                 JSON.stringify(
                     {
-                        'data': message,
+                        'data': override ? override : message,
                         'ser_task': task,
                         'arm_task_id': this.i + 1,
                         'v': get(_version)
@@ -107,7 +107,7 @@ export class _WebSocketHandler {
             );
             this.ws.send(JSON.stringify(
                 {
-                    'data': message,
+                    'data': override ? override : message,
                     'ser_task': task,
                     'arm_task_id': ++this.i,
                     'v': get(_version)

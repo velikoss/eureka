@@ -7,6 +7,7 @@
     import { Md5 } from 'ts-md5';
     import { goto } from '$app/navigation';
 	import '../../app.css';
+    import { page } from '$app/state';
 
     let { children } = $props();
 
@@ -63,6 +64,9 @@
                 <a href="/app/login" class="underline">Войти в систему</a>
             {/if}
             {#if $currentUser != null}
+                {#if page.url.toString().includes("task")}
+                    <a href="/app" class="underline">Закрыть задачу</a>
+                {/if}
                 <p>{$currentUser.student_suname} {$currentUser.student_name.substring(0,1)}.{$currentUser.student_patronymic.substring(0,1)}. ({$currentUser.group_name})</p>
             {/if}
 		</div>
