@@ -3,14 +3,16 @@
     import { onMount } from 'svelte';
     import { _webSocketHandler } from '../../+layout';
     import { GetTask, GetTaskFiles2, GetTaskTests, GetTaskTestsValidity, GetUnitsList, SendKBE } from '$lib/Request';
-    import { currentTask } from '../../../../stores/task';
+    import { currentTask, currentTaskFiles } from '../../../../stores/task';
     import { get, writable } from 'svelte/store';
-    import type { Task } from '../../../../stores/task';
+    import type { Task, TaskFile } from '../../../../stores/task';
     import TaskBar from '$lib/TaskBar.svelte';
+    import CodeEditor from '$lib/CodeEditor.svelte';
     let id = page.params.id;
     let state = writable("problem");
     let _state = "";
     let _task: Task | undefined;
+    let _taskFiles: TaskFile[] | undefined;
     onMount(() => {
         _webSocketHandler.send(new SendKBE());
         _webSocketHandler.send(new GetTask(), parseInt(id));
@@ -20,6 +22,7 @@
         setInterval(() => {
             _task = get(currentTask);
             _state = get(state);
+            _taskFiles = get(currentTaskFiles);
         }, 0);
     });
 </script>
@@ -36,10 +39,23 @@
         <p>Loading task...</p>
         {/if}
         {#if _task}
+        {#if _state == "problem"}
             {@html _task?.theory_text} 
             {@html _task?.task_text} 
             {@html _task?.algo_text} 
         {/if}
-        {_state}
+        {#if _state == "method2"}
+            {JSON.stringify(_task.method2)}
+        {/if}
+        {#if _state == "algo2"}
+            {JSON.stringify(_task.algo2)}
+        {/if}
+        {#if _state == "algo-scheme"}
+            {JSON.stringify(_task.algo_graph)}
+        {/if}
+        {#if _state == "code"}
+            <CodeEditor files={_taskFiles!}> </CodeEditor>
+        {/if}
+        {/if}
     </div>
 </div>

@@ -87,9 +87,9 @@ export interface Task {
     task_output: string;
 }
 
-export interface TaskFile {
-    name: string;
-    file: string;
+export class TaskFile {
+    name: string | undefined;
+    file: string | undefined;
 }
 
 export interface TaskTest {
